@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GymFlow • Fitness Club</title>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <style>
+        :root { --primary: #00ff9d; --dark: #0a0a0a; --gray: #1f1f1f; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--dark); color: #eee; min-height: 100vh; }
+
+        header { background: linear-gradient(135deg, #111, #1a1a1a); padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--primary); }
+        .logo { font-size: 1.9rem; font-weight: 900; }
+        .logo span { color: var(--primary); }
+
+        .nav-links { display: flex; gap: 1.5rem; }
+        .nav-link { color: #ccc; cursor: pointer; font-weight: 600; }
+        .nav-link:hover, .nav-link.active { color: var(--primary); }
+
+        .hamburger { display: none; font-size: 1.8rem; cursor: pointer; color: var(--primary); }
+
+        .main-content { max-width: 1200px; margin: 2rem auto; padding: 0 5%; }
+        .hero { background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), url('https://source.unsplash.com/random/1200x600/?gym'); background-size: cover; text-align: center; padding: 5rem 1rem; border-radius: 20px; margin-bottom: 2rem; }
+        .hero h1 { font-size: 3rem; }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .card { background: var(--gray); padding: 1.5rem; border-radius: 16px; margin: 1rem 0; }
+        .btn { padding: 12px 24px; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; }
+        .btn-primary { background: var(--primary); color: #000; }
+        .btn-success { background: #00cc7a; color: #000; }
+
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 2000; }
+        .modal-content { background: var(--gray); padding: 2rem; border-radius: 20px; width: 90%; max-width: 420px; border: 3px solid var(--primary); }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; position: fixed; top: 70px; left: 0; width: 100%; background: #111; flex-direction: column; }
+            .nav-links.active { display: flex; }
+            .hamburger { display: block; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">GYM<span>FLOW</span></div>
+        <div class="nav-links" id="nav-menu">
+            <a onclick="showTab(0)" class="nav-link active" id="nav-0">Home</a>
+            <a onclick="showTab(1)" class="nav-link" id="nav-1">Dashboard</a>
+            <a onclick="showTab(2)" class="nav-link" id="nav-2">Check-in</a>
+            <a onclick="showTab(3)" class="nav-link" id="nav-3">Classes</a>
+            <span id="user-info" style="margin-left:auto; color:var(--primary);"></span>
+            <a onclick="logout()" id="logout-btn" style="display:none; color:#ff6666;">Logout</a>
+        </div>
+        <div class="hamburger" onclick="toggleMenu()">☰</div>
+    </header>
+
+    <main class="main-content">
+        <!-- Login / Home -->
+        <div id="tab-0" class="tab-content active">
+            <div class="hero">
+                <h1>Welcome to GymFlow</h1>
+                <p style="font-size:1.4rem; margin:1rem 0;">Sign in to access your membership</p>
+                <button onclick="showAuthModal()" class="btn btn-primary" style="font-size:1.2rem;">Login / Sign Up</button>
+            </div>
+        </div>
+
+        <!-- Protected Tabs (Dashboard, Check-in, etc.) -->
+        <div id="tab-1" class="tab-content"> <h1>🏠 Member Dashboard</h1> <div class="card" id="dashboard-content">Please log in first.</div> </div>
+        <div id="tab-2" class="tab-content"> <h1>⚡ Quick Check-in</h1> <div class="card">Check-in feature coming after login.</div> </div>
+        <div id="tab-3" class="tab-content"> <h1>📅 Classes</h1> <div class="card">Class booking available after login.</div> </div>
+    </main>
+
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="modal">
+        <div class="modal-content">
+            <h2 id="modal-title">Login</h2>
+            <input type="email" id="email" placeholder="Email" style="width:100%; padding:12px; margin:10px 0; background:#222; border:none; border-radius:8px; color:white;">
+            <input type="password" id="password" placeholder="Password" style="width:100%; padding:12px; margin:10px 0; background:#222; border:none; border-radius:8px; color:white;">
+            <button onclick="handleAuth()" id="auth-btn" class="btn btn-primary" style="width:100%; margin:10px 0;">Login</button>
+            <p style="text-align:center; margin:10px 0;">
+                <span id="toggle-text">Don't have an account?</span> 
+                <a href="#" onclick="toggleAuthMode()" style="color:var(--primary);">Sign Up</a>
+            </p>
+            <button onclick="closeAuthModal()" class="btn" style="width:100%; background:#444;">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        // ============== REPLACE WITH YOUR FIREBASE CONFIG ==============
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY_HERE",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "XXXXXXXXXX",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        let isLoginMode = true;
+
+        function showAuthModal() {
+            document.getElementById('auth-modal').style.display = 'flex';
+            document.getElementById('modal-title').textContent = isLoginMode ? "Login" : "Sign Up";
+            document.getElementById('auth-btn').textContent = isLoginMode ? "Login" : "Create Account";
+        }
+
+        function closeAuthModal() {
+            document.getElementById('auth-modal').style.display = 'none';
+        }
+
+        function toggleAuthMode() {
+            isLoginMode = !isLoginMode;
+            document.getElementById('modal-title').textContent = isLoginMode ? "Login" : "Sign Up";
+            document.getElementById('auth-btn').textContent = isLoginMode ? "Login" : "Create Account";
+            document.getElementById('toggle-text').textContent = isLoginMode ? "Don't have an account?" : "Already have an account?";
+        }
+
+        function handleAuth() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (!email || !password) return alert("Please fill all fields");
+
+            if (isLoginMode) {
+                auth.signInWithEmailAndPassword(email, password)
+                    .then(() => {
+                        alert("Login successful!");
+                        closeAuthModal();
+                        updateUIAfterLogin();
+                    })
+                    .catch(err => alert(err.message));
+            } else {
+                auth.createUserWithEmailAndPassword(email, password)
+                    .then(() => {
+                        alert("Account created successfully!");
+                        closeAuthModal();
+                        updateUIAfterLogin();
+                    })
+                    .catch(err => alert(err.message));
+            }
+        }
+
+        function updateUIAfterLogin() {
+            const user = auth.currentUser;
+            if (user) {
+                document.getElementById('user-info').textContent = `Hi, ${user.email.split('@')[0]}`;
+                document.getElementById('logout-btn').style.display = 'inline';
+                showTab(1); // Go to Dashboard after login
+            }
+        }
+
+        function logout() {
+            auth.signOut().then(() => {
+                document.getElementById('user-info').textContent = '';
+                document.getElementById('logout-btn').style.display = 'none';
+                showTab(0);
+            });
+        }
+
+        function toggleMenu() {
+            document.getElementById('nav-menu').classList.toggle('active');
+        }
+
+        function showTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(`tab-${tab}`).classList.add('active');
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            if (document.getElementById(`nav-${tab}`)) document.getElementById(`nav-${tab}`).classList.add('active');
+        }
+
+        // Listen to auth state
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                updateUIAfterLogin();
+            }
+        });
+
+        // Make functions global
+        window.showTab = showTab;
+        window.toggleMenu = toggleMenu;
+        window.showAuthModal = showAuthModal;
+        window.closeAuthModal = closeAuthModal;
+        window.toggleAuthMode = toggleAuthMode;
+        window.handleAuth = handleAuth;
+        window.logout = logout;
+    </script>
+</body>
+</html>
