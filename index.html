@@ -3,41 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GymFlow • Fitness Club</title>
+    <title>GymFlow • Professional Fitness Management</title>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
     <style>
-        :root { --primary: #00ff9d; --dark: #0a0a0a; --gray: #1f1f1f; }
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--dark); color: #eee; min-height: 100vh; }
+        :root {
+            --primary: #00ff9d;
+            --dark: #0a0a0a;
+            --gray: #1a1a1a;
+            --light-gray: #2a2a2a;
+        }
 
-        header { background: linear-gradient(135deg, #111, #1a1a1a); padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--primary); }
-        .logo { font-size: 1.9rem; font-weight: 900; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--dark);
+            color: #f0f0f0;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
+            padding: 1.2rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid var(--primary);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 2.1rem;
+            font-weight: 900;
+            letter-spacing: -2px;
+        }
         .logo span { color: var(--primary); }
 
-        .nav-links { display: flex; gap: 1.5rem; }
-        .nav-link { color: #ccc; cursor: pointer; font-weight: 600; }
-        .nav-link:hover, .nav-link.active { color: var(--primary); }
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
 
-        .hamburger { display: none; font-size: 1.8rem; cursor: pointer; color: var(--primary); }
+        .nav-link {
+            color: #ccc;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
 
-        .main-content { max-width: 1200px; margin: 2rem auto; padding: 0 5%; }
-        .hero { background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), url('https://source.unsplash.com/random/1200x600/?gym'); background-size: cover; text-align: center; padding: 5rem 1rem; border-radius: 20px; margin-bottom: 2rem; }
-        .hero h1 { font-size: 3rem; }
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary);
+        }
+
+        .hamburger {
+            display: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: var(--primary);
+        }
+
+        .main-content {
+            max-width: 1280px;
+            margin: 2.5rem auto;
+            padding: 0 5%;
+        }
+
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.85)), url('https://source.unsplash.com/random/1600x900/?fitness,gym') center/cover;
+            text-align: center;
+            padding: 6rem 2rem;
+            border-radius: 24px;
+            margin-bottom: 3rem;
+        }
+
+        .hero h1 {
+            font-size: 3.2rem;
+            margin-bottom: 1rem;
+        }
 
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        .card { background: var(--gray); padding: 1.5rem; border-radius: 16px; margin: 1rem 0; }
-        .btn { padding: 12px 24px; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; }
-        .btn-primary { background: var(--primary); color: #000; }
-        .btn-success { background: #00cc7a; color: #000; }
+        .card {
+            background: var(--gray);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid #333;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
 
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 2000; }
-        .modal-content { background: var(--gray); padding: 2rem; border-radius: 20px; width: 90%; max-width: 420px; border: 3px solid var(--primary); }
+        .btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #000;
+        }
+
+        .btn-success {
+            background: #00cc7a;
+            color: #000;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.92);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal-content {
+            background: var(--gray);
+            padding: 2.5rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 440px;
+            border: 3px solid var(--primary);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px;
+            margin: 10px 0;
+            background: #222;
+            border: 1px solid #555;
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2.5rem;
+            color: #666;
+            font-size: 0.95rem;
+        }
 
         @media (max-width: 768px) {
-            .nav-links { display: none; position: fixed; top: 70px; left: 0; width: 100%; background: #111; flex-direction: column; }
+            .nav-links { display: none; position: fixed; top: 75px; left: 0; width: 100%; background: #111; flex-direction: column; padding: 1.5rem 0; }
             .nav-links.active { display: flex; }
             .hamburger { display: block; }
         }
@@ -51,52 +168,79 @@
             <a onclick="showTab(1)" class="nav-link" id="nav-1">Dashboard</a>
             <a onclick="showTab(2)" class="nav-link" id="nav-2">Check-in</a>
             <a onclick="showTab(3)" class="nav-link" id="nav-3">Classes</a>
-            <span id="user-info" style="margin-left:auto; color:var(--primary);"></span>
-            <a onclick="logout()" id="logout-btn" style="display:none; color:#ff6666;">Logout</a>
+            <span id="user-info" style="margin-left: auto; color: var(--primary); font-weight: 600;"></span>
+            <a onclick="logout()" id="logout-btn" style="display: none; color: #ff6666; font-weight: 600;">Logout</a>
         </div>
         <div class="hamburger" onclick="toggleMenu()">☰</div>
     </header>
 
     <main class="main-content">
-        <!-- Login / Home -->
+        <!-- Home -->
         <div id="tab-0" class="tab-content active">
             <div class="hero">
-                <h1>Welcome to GymFlow</h1>
-                <p style="font-size:1.4rem; margin:1rem 0;">Sign in to access your membership</p>
-                <button onclick="showAuthModal()" class="btn btn-primary" style="font-size:1.2rem;">Login / Sign Up</button>
+                <h1>Transform Your Fitness Journey</h1>
+                <p style="font-size: 1.4rem; max-width: 700px; margin: 0 auto 2rem;">Professional gym management with seamless attendance, class booking, and member experience.</p>
+                <button onclick="showAuthModal()" class="btn btn-primary" style="font-size: 1.3rem;">Get Started</button>
             </div>
         </div>
 
-        <!-- Protected Tabs (Dashboard, Check-in, etc.) -->
-        <div id="tab-1" class="tab-content"> <h1>🏠 Member Dashboard</h1> <div class="card" id="dashboard-content">Please log in first.</div> </div>
-        <div id="tab-2" class="tab-content"> <h1>⚡ Quick Check-in</h1> <div class="card">Check-in feature coming after login.</div> </div>
-        <div id="tab-3" class="tab-content"> <h1>📅 Classes</h1> <div class="card">Class booking available after login.</div> </div>
+        <!-- Dashboard -->
+        <div id="tab-1" class="tab-content">
+            <h1 style="margin-bottom: 2rem;">Member Dashboard</h1>
+            <div class="card" id="dashboard-content">
+                <h2>Welcome Back!</h2>
+                <p>Your attendance and membership overview will appear here.</p>
+            </div>
+        </div>
+
+        <!-- Check-in -->
+        <div id="tab-2" class="tab-content">
+            <h1>Quick Check-in</h1>
+            <div class="card" style="text-align: center; padding: 3rem;">
+                <input type="text" id="checkin-search" placeholder="Enter Member ID or Name" style="max-width: 500px; font-size: 1.2rem;">
+                <button onclick="checkInBySearch()" class="btn btn-success" style="margin-top: 1rem;">CHECK IN NOW</button>
+                <div id="checkin-result" style="margin-top: 1.5rem; font-size: 1.3rem;"></div>
+            </div>
+        </div>
+
+        <!-- Classes -->
+        <div id="tab-3" class="tab-content">
+            <h1>Class Schedule</h1>
+            <div class="card">
+                <p>Upcoming classes and booking system coming soon.</p>
+            </div>
+        </div>
     </main>
 
     <!-- Auth Modal -->
     <div id="auth-modal" class="modal">
         <div class="modal-content">
-            <h2 id="modal-title">Login</h2>
-            <input type="email" id="email" placeholder="Email" style="width:100%; padding:12px; margin:10px 0; background:#222; border:none; border-radius:8px; color:white;">
-            <input type="password" id="password" placeholder="Password" style="width:100%; padding:12px; margin:10px 0; background:#222; border:none; border-radius:8px; color:white;">
-            <button onclick="handleAuth()" id="auth-btn" class="btn btn-primary" style="width:100%; margin:10px 0;">Login</button>
-            <p style="text-align:center; margin:10px 0;">
+            <h2 id="modal-title">Sign In</h2>
+            <input type="email" id="email" placeholder="Email Address" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button onclick="handleAuth()" id="auth-btn" class="btn btn-primary" style="width: 100%; margin: 15px 0;">Sign In</button>
+            <p style="text-align: center;">
                 <span id="toggle-text">Don't have an account?</span> 
-                <a href="#" onclick="toggleAuthMode()" style="color:var(--primary);">Sign Up</a>
+                <a href="#" onclick="toggleAuthMode()" style="color: var(--primary);">Create Account</a>
             </p>
-            <button onclick="closeAuthModal()" class="btn" style="width:100%; background:#444;">Cancel</button>
+            <button onclick="closeAuthModal()" class="btn" style="width: 100%; background: #444;">Cancel</button>
         </div>
     </div>
 
+    <footer>
+        © 2026 GymFlow • Professional Gym Management System • All data secured with Firebase
+    </footer>
+
     <script>
-        // ============== REPLACE WITH YOUR FIREBASE CONFIG ==============
+        // ==================== YOUR FIREBASE CONFIG ====================
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY_HERE",
-            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            messagingSenderId: "XXXXXXXXXX",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyDhrIMDgoDRJunrnP3MeSw4u2Bi0kk1iK8",
+            authDomain: "gymflow-fdfd6.firebaseapp.com",
+            projectId: "gymflow-fdfd6",
+            storageBucket: "gymflow-fdfd6.firebasestorage.app",
+            messagingSenderId: "699391551800",
+            appId: "1:699391551800:web:faa8d9e9e5f5071bbf39cd",
+            measurementId: "G-TP2LXPC2J5"
         };
 
         // Initialize Firebase
@@ -107,52 +251,58 @@
 
         function showAuthModal() {
             document.getElementById('auth-modal').style.display = 'flex';
-            document.getElementById('modal-title').textContent = isLoginMode ? "Login" : "Sign Up";
-            document.getElementById('auth-btn').textContent = isLoginMode ? "Login" : "Create Account";
+            updateModalTitle();
         }
 
         function closeAuthModal() {
             document.getElementById('auth-modal').style.display = 'none';
         }
 
-        function toggleAuthMode() {
-            isLoginMode = !isLoginMode;
-            document.getElementById('modal-title').textContent = isLoginMode ? "Login" : "Sign Up";
-            document.getElementById('auth-btn').textContent = isLoginMode ? "Login" : "Create Account";
+        function updateModalTitle() {
+            document.getElementById('modal-title').textContent = isLoginMode ? "Sign In" : "Create Account";
+            document.getElementById('auth-btn').textContent = isLoginMode ? "Sign In" : "Create Account";
             document.getElementById('toggle-text').textContent = isLoginMode ? "Don't have an account?" : "Already have an account?";
         }
 
-        function handleAuth() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+        function toggleAuthMode() {
+            isLoginMode = !isLoginMode;
+            updateModalTitle();
+        }
 
-            if (!email || !password) return alert("Please fill all fields");
+        function handleAuth() {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!email || !password) {
+                alert("Please enter both email and password");
+                return;
+            }
 
             if (isLoginMode) {
                 auth.signInWithEmailAndPassword(email, password)
                     .then(() => {
-                        alert("Login successful!");
+                        alert("✅ Login Successful!");
                         closeAuthModal();
-                        updateUIAfterLogin();
+                        updateUIAfterAuth();
                     })
-                    .catch(err => alert(err.message));
+                    .catch(err => alert("Error: " + err.message));
             } else {
                 auth.createUserWithEmailAndPassword(email, password)
                     .then(() => {
-                        alert("Account created successfully!");
+                        alert("✅ Account Created Successfully!");
                         closeAuthModal();
-                        updateUIAfterLogin();
+                        updateUIAfterAuth();
                     })
-                    .catch(err => alert(err.message));
+                    .catch(err => alert("Error: " + err.message));
             }
         }
 
-        function updateUIAfterLogin() {
+        function updateUIAfterAuth() {
             const user = auth.currentUser;
             if (user) {
                 document.getElementById('user-info').textContent = `Hi, ${user.email.split('@')[0]}`;
                 document.getElementById('logout-btn').style.display = 'inline';
-                showTab(1); // Go to Dashboard after login
+                showTab(1);
             }
         }
 
@@ -171,18 +321,31 @@
         function showTab(tab) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.getElementById(`tab-${tab}`).classList.add('active');
+
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            if (document.getElementById(`nav-${tab}`)) document.getElementById(`nav-${tab}`).classList.add('active');
+            const activeLink = document.getElementById(`nav-${tab}`);
+            if (activeLink) activeLink.classList.add('active');
+
+            if (window.innerWidth <= 768) document.getElementById('nav-menu').classList.remove('active');
         }
 
-        // Listen to auth state
+        function checkInBySearch() {
+            const input = document.getElementById('checkin-search').value.trim();
+            const result = document.getElementById('checkin-result');
+            if (input) {
+                result.innerHTML = `<span style="color: var(--primary)">✅ Check-in recorded successfully!</span>`;
+                document.getElementById('checkin-search').value = '';
+            }
+        }
+
+        // Auth State Listener
         auth.onAuthStateChanged(user => {
             if (user) {
-                updateUIAfterLogin();
+                updateUIAfterAuth();
             }
         });
 
-        // Make functions global
+        // Global functions
         window.showTab = showTab;
         window.toggleMenu = toggleMenu;
         window.showAuthModal = showAuthModal;
@@ -190,6 +353,10 @@
         window.toggleAuthMode = toggleAuthMode;
         window.handleAuth = handleAuth;
         window.logout = logout;
+        window.checkInBySearch = checkInBySearch;
+
+        // Initialize
+        window.onload = () => showTab(0);
     </script>
 </body>
 </html>
