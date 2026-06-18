@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GymFlow • Professional Fitness Management</title>
+    <title>GymFlow • Professional Gym Management</title>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
     <style>
@@ -12,7 +12,6 @@
             --dark: #0a0a0a;
             --gray: #1a1a1a;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
@@ -20,7 +19,6 @@
             color: #f0f0f0;
             min-height: 100vh;
         }
-
         header {
             background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
             padding: 1.2rem 5%;
@@ -32,32 +30,36 @@
             top: 0;
             z-index: 1000;
         }
-
-        .logo { font-size: 2.1rem; font-weight: 900; letter-spacing: -2px; }
+        .logo { font-size: 2.2rem; font-weight: 900; letter-spacing: -2px; }
         .logo span { color: var(--primary); }
 
         .nav-links { display: flex; gap: 2rem; align-items: center; }
-        .nav-link { color: #ccc; text-decoration: none; font-weight: 600; cursor: pointer; }
+        .nav-link { color: #ccc; cursor: pointer; font-weight: 600; }
         .nav-link:hover, .nav-link.active { color: var(--primary); }
 
         .hamburger { display: none; font-size: 1.8rem; cursor: pointer; color: var(--primary); }
 
         .main-content { max-width: 1280px; margin: 2.5rem auto; padding: 0 5%; }
 
+        /* BUG FIX: tabs had no show/hide rule, so all three were visible at once */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
         .hero {
-            background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.85)), url('https://source.unsplash.com/random/1600x900/?gym');
-            background-size: cover;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(0,255,157,0.18), transparent 45%),
+                radial-gradient(circle at 80% 0%, rgba(0,255,157,0.10), transparent 40%),
+                linear-gradient(135deg, #0f0f0f, #161616 60%, #0a0a0a);
             text-align: center;
             padding: 6rem 2rem;
             border-radius: 24px;
             margin-bottom: 3rem;
+            border: 1px solid #232323;
         }
-
-        .hero h1 { font-size: 3.2rem; margin-bottom: 1rem; }
 
         .card {
             background: var(--gray);
-            padding: 2rem;
+            padding: 2.5rem;
             border-radius: 20px;
             border: 1px solid #333;
         }
@@ -69,6 +71,7 @@
             font-weight: 700;
             cursor: pointer;
         }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
         .btn-primary { background: var(--primary); color: #000; }
         .btn-success { background: #00cc7a; color: #000; }
 
@@ -94,12 +97,32 @@
             border: 1px solid #555;
             border-radius: 10px;
             color: white;
+            font-size: 1rem;
+        }
+        input:focus { outline: 2px solid var(--primary); }
+
+        .auth-error {
+            background: rgba(255,80,80,0.12);
+            border: 1px solid #ff5050;
+            color: #ff9999;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 0.92rem;
+            margin: 8px 0;
+            display: none;
         }
 
-        footer { text-align: center; padding: 2.5rem; color: #666; }
-        
+        .auth-hint {
+            color: #888;
+            font-size: 0.82rem;
+            margin-top: -4px;
+            margin-bottom: 10px;
+        }
+
+        footer { text-align: center; padding: 3rem; color: #666; }
+
         @media (max-width: 768px) {
-            .nav-links { display: none; position: fixed; top: 75px; left: 0; width: 100%; background: #111; flex-direction: column; }
+            .nav-links { display: none; position: fixed; top: 75px; left: 0; width: 100%; background: #111; flex-direction: column; padding: 1rem 5%; gap: 1rem; }
             .nav-links.active { display: flex; }
             .hamburger { display: block; }
         }
@@ -112,7 +135,7 @@
             <a onclick="showTab(0)" class="nav-link active" id="nav-0">Home</a>
             <a onclick="showTab(1)" class="nav-link" id="nav-1">Dashboard</a>
             <a onclick="showTab(2)" class="nav-link" id="nav-2">Check-in</a>
-            <span id="user-info" style="margin-left:auto; color:var(--primary);"></span>
+            <span id="user-info" style="margin-left:auto; color:var(--primary); font-weight:600;"></span>
             <a onclick="logout()" id="logout-btn" style="display:none; color:#ff6666;">Logout</a>
         </div>
         <div class="hamburger" onclick="toggleMenu()">☰</div>
@@ -121,26 +144,27 @@
     <main class="main-content">
         <div id="tab-0" class="tab-content active">
             <div class="hero">
-                <h1>Transform Your Fitness Journey</h1>
-                <p style="font-size:1.4rem;">Sign in to manage your gym attendance and access all features.</p>
-                <button onclick="showAuthModal()" class="btn btn-primary" style="font-size:1.3rem;">Login / Register</button>
+                <h1>Welcome to GymFlow</h1>
+                <p style="font-size:1.4rem; color:#ccc; margin-top:0.5rem;">Professional Gym Management System</p>
+                <button onclick="showAuthModal()" class="btn btn-primary" style="font-size:1.3rem; padding:16px 40px; margin-top:2rem;">Login / Register</button>
             </div>
         </div>
 
         <div id="tab-1" class="tab-content">
-            <h1>Member Dashboard</h1>
+            <h1>Dashboard</h1>
             <div class="card">
-                <h2>Welcome to GymFlow</h2>
-                <p>You are successfully logged in.</p>
+                <h2>✅ Welcome Back!</h2>
+                <p id="dashboard-greeting">You are logged in successfully.</p>
             </div>
         </div>
 
         <div id="tab-2" class="tab-content">
             <h1>Quick Check-in</h1>
             <div class="card" style="text-align:center;">
-                <input type="text" id="checkin-search" placeholder="Enter Member ID or Name" style="max-width:500px; padding:16px;">
+                <input type="text" id="checkin-search" placeholder="Member ID or Name" style="max-width:500px; padding:16px; font-size:1.1rem;">
+                <br><br>
                 <button onclick="checkInBySearch()" class="btn btn-success">CHECK IN</button>
-                <div id="checkin-result" style="margin-top:20px; font-size:1.2rem;"></div>
+                <div id="checkin-result" style="margin-top:20px; min-height:30px;"></div>
             </div>
         </div>
     </main>
@@ -149,29 +173,29 @@
     <div id="auth-modal" class="modal">
         <div class="modal-content">
             <h2 id="modal-title">Sign In</h2>
-            <input type="email" id="email" placeholder="Email" required>
-            <input type="password" id="password" placeholder="Password" required>
+            <div id="auth-error" class="auth-error"></div>
+            <input type="email" id="email" placeholder="Email Address" autocomplete="email">
+            <input type="password" id="password" placeholder="Password" autocomplete="current-password">
+            <div class="auth-hint">Password must be at least 6 characters.</div>
             <button onclick="handleAuth()" id="auth-btn" class="btn btn-primary" style="width:100%; margin:15px 0;">Sign In</button>
             <p style="text-align:center;">
-                <span id="toggle-text">Don't have an account?</span> 
+                <span id="toggle-text">Don't have an account?</span>
                 <a href="#" onclick="toggleAuthMode()" style="color:var(--primary);">Sign Up</a>
             </p>
             <button onclick="closeAuthModal()" class="btn" style="width:100%; background:#444;">Cancel</button>
         </div>
     </div>
 
-    <footer>© 2026 GymFlow • Secured by Firebase</footer>
+    <footer>© 2026 GymFlow • Secured with Firebase</footer>
 
     <script>
-        // Your Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyDhrIMDgoDRJunrnP3MeSw4u2Bi0kk1iK8",
             authDomain: "gymflow-fdfd6.firebaseapp.com",
             projectId: "gymflow-fdfd6",
             storageBucket: "gymflow-fdfd6.firebasestorage.app",
             messagingSenderId: "699391551800",
-            appId: "1:699391551800:web:faa8d9e9e5f5071bbf39cd",
-            measurementId: "G-TP2LXPC2J5"
+            appId: "1:699391551800:web:faa8d9e9e5f5071bbf39cd"
         };
 
         firebase.initializeApp(firebaseConfig);
@@ -181,14 +205,18 @@
 
         function showAuthModal() {
             document.getElementById('auth-modal').style.display = 'flex';
-            updateModal();
+            hideAuthError();
+            updateModalTitle();
         }
 
         function closeAuthModal() {
             document.getElementById('auth-modal').style.display = 'none';
+            document.getElementById('email').value = '';
+            document.getElementById('password').value = '';
+            hideAuthError();
         }
 
-        function updateModal() {
+        function updateModalTitle() {
             document.getElementById('modal-title').textContent = isLoginMode ? "Sign In" : "Create Account";
             document.getElementById('auth-btn').textContent = isLoginMode ? "Sign In" : "Create Account";
             document.getElementById('toggle-text').textContent = isLoginMode ? "Don't have an account?" : "Already have an account?";
@@ -196,39 +224,94 @@
 
         function toggleAuthMode() {
             isLoginMode = !isLoginMode;
-            updateModal();
+            hideAuthError();
+            updateModalTitle();
+        }
+
+        function showAuthError(message) {
+            const el = document.getElementById('auth-error');
+            el.textContent = message;
+            el.style.display = 'block';
+        }
+
+        function hideAuthError() {
+            const el = document.getElementById('auth-error');
+            el.style.display = 'none';
+            el.textContent = '';
+        }
+
+        // Turns Firebase's raw error codes into messages a user can act on
+        function friendlyAuthError(error) {
+            switch (error.code) {
+                case 'auth/invalid-email':
+                    return 'That email address looks invalid.';
+                case 'auth/user-not-found':
+                    return 'No account found with that email.';
+                case 'auth/wrong-password':
+                case 'auth/invalid-credential':
+                    return 'Incorrect email or password.';
+                case 'auth/email-already-in-use':
+                    return 'An account with that email already exists. Try signing in instead.';
+                case 'auth/weak-password':
+                    return 'Password should be at least 6 characters.';
+                case 'auth/unauthorized-domain':
+                    return 'This domain is not authorized in your Firebase project. Add it under Authentication → Settings → Authorized domains.';
+                case 'auth/operation-not-allowed':
+                    return 'Email/Password sign-in is disabled for this project. Enable it under Authentication → Sign-in method.';
+                case 'auth/network-request-failed':
+                    return 'Network error — check your connection and try again.';
+                case 'auth/too-many-requests':
+                    return 'Too many attempts. Please wait a moment and try again.';
+                default:
+                    return error.message;
+            }
         }
 
         function handleAuth() {
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value.trim();
+            const btn = document.getElementById('auth-btn');
 
-            if (!email || !password) return alert("Please fill email and password");
+            hideAuthError();
 
-            if (isLoginMode) {
-                auth.signInWithEmailAndPassword(email, password)
-                    .then(() => {
-                        alert("✅ Login Successful!");
-                        closeAuthModal();
-                        updateUI();
-                    })
-                    .catch(error => alert("Login Error: " + error.message));
-            } else {
-                auth.createUserWithEmailAndPassword(email, password)
-                    .then(() => {
-                        alert("✅ Account Created Successfully!");
-                        closeAuthModal();
-                        updateUI();
-                    })
-                    .catch(error => alert("Signup Error: " + error.message));
+            if (!email || !password) {
+                showAuthError('Please enter both an email and a password.');
+                return;
             }
+            if (password.length < 6) {
+                showAuthError('Password must be at least 6 characters.');
+                return;
+            }
+
+            const originalLabel = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = isLoginMode ? 'Signing in…' : 'Creating account…';
+
+            const action = isLoginMode
+                ? auth.signInWithEmailAndPassword(email, password)
+                : auth.createUserWithEmailAndPassword(email, password);
+
+            action
+                .then(() => {
+                    closeAuthModal();
+                    updateUI();
+                })
+                .catch(error => {
+                    showAuthError(friendlyAuthError(error));
+                })
+                .finally(() => {
+                    btn.disabled = false;
+                    btn.textContent = originalLabel;
+                });
         }
 
         function updateUI() {
             const user = auth.currentUser;
             if (user) {
-                document.getElementById('user-info').textContent = `Hi, ${user.email.split('@')[0]}`;
+                const name = user.email.split('@')[0];
+                document.getElementById('user-info').textContent = `Hi, ${name}`;
                 document.getElementById('logout-btn').style.display = 'inline';
+                document.getElementById('dashboard-greeting').textContent = `You're signed in as ${user.email}.`;
                 showTab(1);
             }
         }
@@ -250,6 +333,7 @@
             document.getElementById(`tab-${tab}`).classList.add('active');
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
             if (document.getElementById(`nav-${tab}`)) document.getElementById(`nav-${tab}`).classList.add('active');
+            document.getElementById('nav-menu').classList.remove('active'); // close mobile menu after navigating
         }
 
         function checkInBySearch() {
@@ -260,7 +344,11 @@
             }
         }
 
-        // Auth State Change
+        // Submit the auth form on Enter instead of only via button click
+        document.getElementById('password').addEventListener('keydown', e => {
+            if (e.key === 'Enter') handleAuth();
+        });
+
         auth.onAuthStateChanged(user => {
             if (user) updateUI();
         });
