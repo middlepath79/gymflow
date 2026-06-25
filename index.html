@@ -12,7 +12,7 @@
             --gold: #D4AF37;
             --navy: #0A2540;
             --dark: #0F172A;
-            --card: rgba(30, 41, 55, 0.85);
+            --card: rgba(30, 41, 55, 0.92);
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -22,7 +22,6 @@
             background: linear-gradient(135deg, #0A2540 0%, #1E2937 100%);
             color: white;
             min-height: 100vh;
-            line-height: 1.6;
         }
         
         header {
@@ -52,38 +51,17 @@
             display: flex;
             gap: 2.2rem;
             align-items: center;
-            transition: all 0.4s ease;
         }
         
         .nav-link {
             color: #e2e8f0;
             font-weight: 600;
-            font-size: 1.05rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            position: relative;
         }
         
-        .nav-link:hover, .nav-link.active { 
-            color: var(--gold); 
-        }
+        .nav-link:hover, .nav-link.active { color: var(--gold); }
         
-        .nav-link:after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: -4px;
-            left: 0;
-            background: var(--gold);
-            transition: width 0.3s ease;
-        }
-        
-        .nav-link:hover:after, .nav-link.active:after {
-            width: 100%;
-        }
-        
-        /* Hamburger */
         .hamburger {
             display: none;
             flex-direction: column;
@@ -101,16 +79,10 @@
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        .hamburger.active span:nth-child(1) {
-            transform: rotate(45deg) translate(6px, 6px);
-        }
-        .hamburger.active span:nth-child(2) {
-            opacity: 0;
-        }
-        .hamburger.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(5px, -5px);
-        }
-        
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
         .main-content {
             max-width: 1280px;
             margin: 40px auto;
@@ -118,20 +90,11 @@
         }
         
         .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeIn 0.6s ease; }
+        .tab-content.active { display: block; animation: fadeIn 0.5s ease forwards; }
         
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .hero {
-            text-align: center;
-            padding: 110px 20px;
-            background: rgba(30, 41, 55, 0.6);
-            border-radius: 28px;
-            border: 1px solid rgba(212, 175, 55, 0.15);
-            backdrop-filter: blur(12px);
         }
         
         .card {
@@ -139,41 +102,34 @@
             padding: 32px;
             border-radius: 24px;
             margin-top: 24px;
-            border: 1px solid rgba(212, 175, 55, 0.12);
+            border: 1px solid rgba(212, 175, 55, 0.15);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         
-        .card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
         }
         
-        .affirmation {
-            font-size: 1.75rem;
-            font-style: italic;
-            color: var(--gold);
-            line-height: 1.45;
-            margin: 24px 0;
+        .greeting {
+            font-size: 2.6rem;
+            font-weight: 700;
+            line-height: 1.1;
         }
         
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 24px;
-            margin: 32px 0;
-        }
-        
-        .stat {
-            background: rgba(15, 23, 42, 0.8);
-            padding: 26px;
-            border-radius: 20px;
-            border-left: 6px solid var(--primary);
-            transition: all 0.3s ease;
-        }
-        
-        .stat:hover {
-            transform: scale(1.03);
+        .streak {
+            background: #1E2937;
+            padding: 12px 24px;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 1.3rem;
         }
         
         .btn {
@@ -193,24 +149,6 @@
         
         .btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.4);
-        }
-        
-        .mood-options {
-            display: flex;
-            justify-content: center;
-            gap: 36px;
-            font-size: 3.8rem;
-            margin: 30px 0;
-        }
-        
-        .mood-options span {
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
-        }
-        
-        .mood-options span:hover { 
-            transform: scale(1.45) rotate(8deg); 
         }
         
         .modal {
@@ -231,7 +169,6 @@
             width: 90%;
             max-width: 460px;
             border: 2px solid var(--gold);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
         }
         
         input {
@@ -245,20 +182,10 @@
             font-size: 1.05rem;
         }
         
-        #auth-error {
-            display: none;
-            background: #451818;
-            color: #ffb0b0;
-            padding: 14px;
-            border-radius: 10px;
-            margin: 12px 0;
-        }
-        
         footer {
             text-align: center;
             padding: 50px 20px 30px;
             color: #94a3b8;
-            font-size: 0.95rem;
         }
         
         @media (max-width: 768px) {
@@ -272,7 +199,6 @@
                 flex-direction: column;
                 padding: 30px 5%;
                 gap: 20px;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.6);
             }
             .nav-links.active { display: flex; }
             .hamburger { display: flex; }
@@ -282,86 +208,69 @@
 <body>
     <header>
         <div class="logo">🌊 Purpose<span>FLOW</span></div>
-        
         <div class="nav-links" id="nav-menu">
             <a class="nav-link active" id="nav-0" onclick="showTab(0)">Home</a>
             <a class="nav-link" id="nav-1" onclick="showTab(1)">Dashboard</a>
             <a class="nav-link" id="nav-2" onclick="showTab(2)">Habits</a>
-            <span id="user-info" style="margin-left:auto; color:var(--gold); font-weight:600;"></span>
-            <a id="logout-btn" style="display:none; color:#f87171; cursor:pointer; font-weight:600;" onclick="logout()">Logout</a>
+            <span id="user-info" style="margin-left:auto; color:var(--gold);"></span>
+            <a id="logout-btn" style="display:none; color:#f87171; cursor:pointer;" onclick="logout()">Logout</a>
         </div>
-        
         <button class="hamburger" id="hamburger-btn">
-            <span></span>
-            <span></span>
-            <span></span>
+            <span></span><span></span><span></span>
         </button>
     </header>
 
     <main class="main-content">
-        <!-- Home Tab -->
-        <div id="tab-0" class="tab-content active">
-            <div class="hero">
-                <h1 style="font-size: 3.2rem; margin-bottom: 16px;">Start Your Day With Purpose</h1>
-                <p style="font-size: 1.35rem; color: #cbd5e1; max-width: 600px; margin: 0 auto 32px;">Clarity • Growth • Gratitude</p>
-                <button class="btn btn-primary" onclick="showAuthModal()">Begin Your Journey</button>
+        <!-- Dashboard -->
+        <div id="tab-1" class="tab-content active">
+            <div class="dashboard-header">
+                <div>
+                    <p id="time-greeting" style="color:#94a3b8; font-size:1.1rem;"></p>
+                    <h1 class="greeting">Good Morning, <span id="user-name">Friend</span>!</h1>
+                </div>
+                <div class="streak" id="streak-display">🔥 7 Day Streak</div>
             </div>
-        </div>
 
-        <!-- Dashboard Tab -->
-        <div id="tab-1" class="tab-content">
-            <h1 style="margin-bottom: 28px; font-size: 2.4rem;">Good Morning, <span id="user-name">Friend</span>!</h1>
-            
             <div class="card">
-                <h2 style="margin-bottom: 16px;">Today's Affirmation</h2>
-                <p id="affirmation-text" class="affirmation"></p>
-                <div style="display: flex; gap: 14px; margin-top: 20px;">
+                <h2>Today's Affirmation</h2>
+                <p id="affirmation-text" class="affirmation" style="font-size:1.75rem; font-style:italic; color:var(--gold); margin:20px 0;"></p>
+                <div style="display:flex; gap:14px;">
                     <button class="btn btn-primary" onclick="speakAffirmation()" style="flex:1;">🔊 Listen</button>
                     <button class="btn" onclick="shareAffirmation()" style="flex:1; background:#334155;">🔗 Share</button>
                 </div>
             </div>
 
-            <div class="card">
-                <h2>Today's Main Goal</h2>
-                <input type="text" id="main-goal" placeholder="What is your main focus today?" onblur="saveGoal()">
-                <div style="height:14px; background:#334155; border-radius:999px; margin:18px 0; overflow:hidden;">
-                    <div style="width:68%; height:100%; background:linear-gradient(to right, var(--primary), #34D399);"></div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px,1fr)); gap:24px; margin-top:24px;">
+                <div class="card">
+                    <h3>🎯 Today's Main Goal</h3>
+                    <input type="text" id="main-goal" placeholder="What will move you forward today?" onblur="saveGoal()" style="width:100%; padding:16px;">
+                    <button onclick="completeGoal()" class="btn btn-primary" style="width:100%; margin-top:16px;">Mark Progress (+50 XP)</button>
                 </div>
-            </div>
 
-            <div class="stats">
-                <div class="stat">
-                    <h3>Current Streak</h3>
-                    <h2 style="font-size:2.8rem; margin-top:8px;">7 🔥</h2>
-                </div>
-                <div class="stat">
-                    <h3>XP Points</h3>
-                    <h2 style="font-size:2.8rem; margin-top:8px;">1240</h2>
-                </div>
-                <div class="stat">
-                    <h3>Consistency</h3>
-                    <h2 style="font-size:2.8rem; margin-top:8px;">92%</h2>
+                <div class="card">
+                    <h3>⚡ Quick Wins</h3>
+                    <div style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
+                        <button onclick="quickWin(1)" class="btn" style="background:#1E2937; text-align:left;">Gratitude Journal</button>
+                        <button onclick="quickWin(2)" class="btn" style="background:#1E2937; text-align:left;">5 Min Meditation</button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Habits Tab -->
+        <!-- Home -->
+        <div id="tab-0" class="tab-content">
+            <div style="text-align:center; padding:140px 20px;">
+                <h1 style="font-size:3.2rem; margin-bottom:20px;">Start Your Day With Purpose</h1>
+                <button class="btn btn-primary" onclick="showAuthModal()" style="padding:18px 48px; font-size:1.2rem;">Begin Your Journey</button>
+            </div>
+        </div>
+
+        <!-- Habits -->
         <div id="tab-2" class="tab-content">
-            <h1 style="margin-bottom: 24px;">Daily Habits</h1>
+            <h1 style="margin-bottom:24px;">Daily Habits</h1>
             <div class="card">
                 <div id="habits-list"></div>
-                <button class="btn" onclick="addHabit()" style="background:#334155; width:100%; margin-top:20px;">+ Add New Habit</button>
-            </div>
-
-            <div class="card">
-                <h2>How do you feel today?</h2>
-                <div class="mood-options">
-                    <span onclick="logMood('Excellent')">😊</span>
-                    <span onclick="logMood('Good')">🙂</span>
-                    <span onclick="logMood('Neutral')">😐</span>
-                    <span onclick="logMood('Low')">😔</span>
-                    <span onclick="logMood('Stressed')">😣</span>
-                </div>
+                <button onclick="addHabit()" class="btn" style="width:100%; margin-top:20px; background:#334155;">+ Add New Habit</button>
             </div>
         </div>
     </main>
@@ -369,23 +278,22 @@
     <!-- Auth Modal -->
     <div class="modal" id="auth-modal">
         <div class="modal-content">
-            <h2 id="modal-title" style="margin-bottom:24px; text-align:center;">Sign In</h2>
-            <div id="auth-error"></div>
+            <h2 id="modal-title">Sign In</h2>
+            <div id="auth-error" style="display:none; background:#451818; color:#ffb0b0; padding:14px; border-radius:10px; margin:12px 0;"></div>
             <input type="email" id="email" placeholder="Email">
             <input type="password" id="password" placeholder="Password">
             <button class="btn btn-primary" style="width:100%; margin-top:12px;" id="auth-btn" onclick="handleAuth()">Sign In</button>
             <p style="margin-top:20px; text-align:center">
-                <span id="toggle-text">Don't have an account?</span>
-                <a href="#" onclick="toggleAuthMode()" style="color:var(--gold)"> Sign Up</a>
+                <span id="toggle-text">Don't have an account?</span> 
+                <a href="#" onclick="toggleAuthMode()" style="color:var(--gold)">Sign Up</a>
             </p>
-            <button class="btn" style="width:100%; margin-top:16px; background:#334155" onclick="closeAuthModal()">Cancel</button>
+            <button onclick="closeAuthModal()" class="btn" style="width:100%; background:#334155; margin-top:12px;">Cancel</button>
         </div>
     </div>
 
     <footer>© 2026 PurposeFlow • Grow With Purpose Every Day</footer>
 
     <script>
-        // Firebase (your config)
         const firebaseConfig = {
             apiKey: "AIzaSyDhrIMDgoDRJunrnP3MeSw4u2Bi0kk1iK8",
             authDomain: "gymflow-fdfd6.firebaseapp.com",
@@ -409,12 +317,7 @@
             "My actions today shape a powerful tomorrow.",
             "I grow stronger through consistent effort and discipline.",
             "I choose growth, peace, and purpose in every moment.",
-            "I am becoming the best version of myself.",
-            "Challenges are opportunities for my greatest growth.",
-            "I radiate confidence, clarity, and calm.",
-            "I trust the process and honor my journey.",
-            "Every small step I take leads to big transformation.",
-            "I am worthy of success, love, and abundance."
+            "I am becoming the best version of myself."
         ];
 
         function getDailyAffirmation() {
@@ -423,8 +326,14 @@
             for (let i = 0; i < today.length; i++) {
                 hash = today.charCodeAt(i) + ((hash << 5) - hash);
             }
-            const index = Math.abs(hash) % affirmationsPool.length;
-            return affirmationsPool[index];
+            return affirmationsPool[Math.abs(hash) % affirmationsPool.length];
+        }
+
+        function getTimeGreeting() {
+            const hour = new Date().getHours();
+            if (hour < 12) return "Good Morning";
+            if (hour < 17) return "Good Afternoon";
+            return "Good Evening";
         }
 
         // Hamburger Menu
@@ -434,7 +343,6 @@
             document.getElementById('nav-menu').classList.toggle('active');
         });
 
-        // Rest of the script (same as before)
         function showAuthModal() { document.getElementById("auth-modal").style.display = "flex"; }
         function closeAuthModal() { document.getElementById("auth-modal").style.display = "none"; }
         function toggleAuthMode() {
@@ -476,14 +384,11 @@
                 document.getElementById("user-name").textContent = name;
                 document.getElementById("user-info").innerHTML = `Hi, ${name}`;
                 document.getElementById("logout-btn").style.display = "inline";
-                showTab(1);
-                loadHabits();
             }
         }
 
         function logout() {
             auth.signOut().then(() => {
-                document.getElementById("user-info").innerHTML = "";
                 document.getElementById("logout-btn").style.display = "none";
                 showTab(0);
             });
@@ -494,30 +399,40 @@
             document.getElementById("tab-" + tab).classList.add("active");
             document.querySelectorAll(".nav-link").forEach(el => el.classList.remove("active"));
             if (document.getElementById("nav-" + tab)) document.getElementById("nav-" + tab).classList.add("active");
-            document.getElementById("nav-menu").classList.remove("active");
+            
+            // Close mobile menu
             hamburger.classList.remove('active');
+            document.getElementById("nav-menu").classList.remove("active");
         }
 
         function speakAffirmation() {
             const text = document.getElementById('affirmation-text').textContent;
-            const utterance = new SpeechSynthesisUtterance(text);
-            speechSynthesis.speak(utterance);
+            speechSynthesis.speak(new SpeechSynthesisUtterance(text));
         }
 
         async function shareAffirmation() {
             const text = document.getElementById('affirmation-text').textContent;
             try {
-                if (navigator.share) await navigator.share({ title: "PurposeFlow", text });
+                if (navigator.share) await navigator.share({title: "PurposeFlow", text});
                 else {
                     await navigator.clipboard.writeText(text);
-                    alert("Affirmation copied!");
+                    alert("Copied to clipboard!");
                 }
-            } catch { navigator.clipboard.writeText(text); }
+            } catch {
+                navigator.clipboard.writeText(text);
+            }
         }
 
         function saveGoal() {
-            const goal = document.getElementById('main-goal').value;
-            if (goal) console.log("Goal saved:", goal);
+            console.log("Goal saved");
+        }
+
+        function completeGoal() {
+            alert("🎉 Progress recorded! +50 XP");
+        }
+
+        function quickWin(n) {
+            alert("✅ Quick win logged! +25 XP");
         }
 
         function loadHabits() {
@@ -525,7 +440,7 @@
             container.innerHTML = '<h3 style="margin-bottom:16px;">Your Daily Habits</h3>';
             habits.forEach(h => {
                 const div = document.createElement('div');
-                div.style.cssText = 'padding:18px; margin:12px 0; background:rgba(51,65,85,0.6); border-radius:16px; display:flex; justify-content:space-between; align-items:center;';
+                div.style.cssText = 'padding:18px; margin:12px 0; background:#334155; border-radius:16px; display:flex; justify-content:space-between; align-items:center;';
                 div.innerHTML = `<span>${h.name}</span><input type="checkbox" ${h.completed ? 'checked' : ''} onchange="toggleHabit(${h.id})"/>`;
                 container.appendChild(div);
             });
@@ -544,19 +459,19 @@
             }
         }
 
-        function logMood(mood) {
-            alert(`Mood logged: ${mood} 🌟`);
-        }
-
         // Initialize
-        auth.onAuthStateChanged(user => { if (user) updateUI(); });
+        auth.onAuthStateChanged(user => {
+            if (user) updateUI();
+        });
 
         window.onload = () => {
-            showTab(0);
+            showTab(1);
             document.getElementById('affirmation-text').textContent = `"${getDailyAffirmation()}"`;
+            document.getElementById('time-greeting').textContent = getTimeGreeting();
+            loadHabits();
         };
 
-        // Make functions global
+        // Global functions
         window.showTab = showTab;
         window.showAuthModal = showAuthModal;
         window.closeAuthModal = closeAuthModal;
@@ -566,8 +481,10 @@
         window.speakAffirmation = speakAffirmation;
         window.shareAffirmation = shareAffirmation;
         window.saveGoal = saveGoal;
+        window.completeGoal = completeGoal;
+        window.quickWin = quickWin;
         window.addHabit = addHabit;
-        window.logMood = logMood;
+        window.toggleHabit = toggleHabit;
     </script>
 </body>
 </html>
