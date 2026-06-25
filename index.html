@@ -8,7 +8,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
     <style>
         :root {
-            --primary: #10B981;     /* Emerald */
+            --primary: #10B981;
             --gold: #D4AF37;
             --navy: #0A2540;
             --dark: #0F172A;
@@ -17,10 +17,9 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
-            background: var(--navy);
+            background: linear-gradient(135deg, #0A2540 0%, #1E2937 100%);
             color: white;
             min-height: 100vh;
-            background: linear-gradient(135deg, #0A2540 0%, #1E2937 100%);
         }
         header {
             background: rgba(15, 23, 42, 0.95);
@@ -54,6 +53,14 @@
         }
         .nav-link:hover, .nav-link.active { 
             color: var(--gold); 
+        }
+        .hamburger {
+            display: none;
+            font-size: 1.8rem;
+            background: none;
+            border: none;
+            color: var(--gold);
+            cursor: pointer;
         }
         .main-content {
             max-width: 1200px;
@@ -158,19 +165,22 @@
             padding: 40px 20px;
             color: #777;
         }
+
         @media (max-width: 768px) {
             .nav-links {
                 display: none;
                 position: fixed;
-                top: 70px;
+                top: 75px;
                 left: 0;
                 width: 100%;
                 background: #0F172A;
                 flex-direction: column;
-                padding: 20px;
-                gap: 15px;
+                padding: 25px;
+                gap: 18px;
+                box-shadow: 0 10px 15px rgba(0,0,0,0.5);
             }
             .nav-links.active { display: flex; }
+            .hamburger { display: block; }
         }
     </style>
 </head>
@@ -184,7 +194,7 @@
             <span id="user-info" style="margin-left:auto; color:var(--gold);"></span>
             <a id="logout-btn" style="display:none; color:#ff6666; cursor:pointer;" onclick="logout()">Logout</a>
         </div>
-        <button class="hamburger" onclick="toggleMenu()" style="display:none;">☰</button>
+        <button class="hamburger" onclick="toggleMenu()">☰</button>
     </header>
 
     <main class="main-content">
@@ -203,8 +213,11 @@
             
             <div class="card">
                 <h2>Today's Affirmation</h2>
-                <p id="affirmation-text" class="affirmation">"I grow stronger through consistent effort and purpose."</p>
-                <button class="btn btn-primary" onclick="speakAffirmation()" style="width:100%; margin-top:15px;">🔊 Listen</button>
+                <p id="affirmation-text" class="affirmation"></p>
+                <div style="display: flex; gap: 12px; margin-top: 15px;">
+                    <button class="btn btn-primary" onclick="speakAffirmation()" style="flex:1;">🔊 Listen</button>
+                    <button class="btn" onclick="shareAffirmation()" style="flex:1; background:#334155;">🔗 Share</button>
+                </div>
             </div>
 
             <div class="card">
@@ -271,7 +284,6 @@
     <footer>© 2026 PurposeFlow • Grow With Purpose Every Day</footer>
 
     <script>
-        // ================== Firebase Config (Already yours) ==================
         const firebaseConfig = {
             apiKey: "AIzaSyDhrIMDgoDRJunrnP3MeSw4u2Bi0kk1iK8",
             authDomain: "gymflow-fdfd6.firebaseapp.com",
@@ -284,12 +296,36 @@
         const auth = firebase.auth();
         let isLoginMode = true;
 
-        // Sample Habits
         let habits = [
             { id: 1, name: "Morning Meditation", completed: true },
             { id: 2, name: "Read 10 Pages", completed: false },
             { id: 3, name: "Gratitude Journal", completed: false }
         ];
+
+        // Daily Affirmations Pool
+        const affirmationsPool = [
+            "I am capable of achieving meaningful goals today.",
+            "My actions today shape a powerful tomorrow.",
+            "I grow stronger through consistent effort and discipline.",
+            "I choose growth, peace, and purpose in every moment.",
+            "I am becoming the best version of myself.",
+            "Challenges are opportunities for my greatest growth.",
+            "I radiate confidence, clarity, and calm.",
+            "I trust the process and honor my journey.",
+            "Every small step I take leads to big transformation.",
+            "I am worthy of success, love, and abundance."
+        ];
+
+        // Get Daily Affirmation (changes every day)
+        function getDailyAffirmation() {
+            const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+            let hash = 0;
+            for (let i = 0; i < today.length; i++) {
+                hash = today.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const index = Math.abs(hash) % affirmationsPool.length;
+            return affirmationsPool[index];
+        }
 
         // Auth Functions
         function showAuthModal() {
@@ -320,7 +356,7 @@
                 ? auth.signInWithEmailAndPassword(email, password)
                 : auth.createUserWithEmailAndPassword(email, password);
 
-            action.then((userCred) => {
+            action.then(() => {
                 closeAuthModal();
                 updateUI();
             }).catch(err => {
@@ -349,10 +385,10 @@
             });
         }
 
-        // Navigation
         function toggleMenu() {
             document.getElementById("nav-menu").classList.toggle("active");
         }
+
         function showTab(tab) {
             document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
             document.getElementById("tab-" + tab).classList.add("active");
@@ -360,13 +396,32 @@
             if (document.getElementById("nav-" + tab)) {
                 document.getElementById("nav-" + tab).classList.add("active");
             }
+            document.getElementById("nav-menu").classList.remove("active");
         }
 
-        // PurposeFlow Features
+        // Features
         function speakAffirmation() {
             const text = document.getElementById('affirmation-text').textContent;
             const utterance = new SpeechSynthesisUtterance(text);
             speechSynthesis.speak(utterance);
+        }
+
+        async function shareAffirmation() {
+            const text = document.getElementById('affirmation-text').textContent;
+            try {
+                if (navigator.share) {
+                    await navigator.share({
+                        title: "PurposeFlow Daily Affirmation",
+                        text: text
+                    });
+                } else {
+                    await navigator.clipboard.writeText(text);
+                    alert("Affirmation copied to clipboard!");
+                }
+            } catch (err) {
+                alert("Affirmation copied to clipboard!");
+                navigator.clipboard.writeText(text);
+            }
         }
 
         function saveGoal() {
@@ -407,12 +462,18 @@
 
         // Initialize
         auth.onAuthStateChanged(user => {
-            if (user) updateUI();
+            if (user) {
+                updateUI();
+            }
         });
 
-        window.onload = () => showTab(0);
+        window.onload = () => {
+            showTab(0);
+            // Set daily affirmation on load
+            document.getElementById('affirmation-text').textContent = `"${getDailyAffirmation()}"`;
+        };
 
-        // Global functions
+        // Expose functions
         window.showTab = showTab;
         window.toggleMenu = toggleMenu;
         window.showAuthModal = showAuthModal;
@@ -421,6 +482,7 @@
         window.handleAuth = handleAuth;
         window.logout = logout;
         window.speakAffirmation = speakAffirmation;
+        window.shareAffirmation = shareAffirmation;
         window.saveGoal = saveGoal;
         window.addHabit = addHabit;
         window.logMood = logMood;
